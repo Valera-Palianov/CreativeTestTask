@@ -48,7 +48,7 @@ const getOptimization = (mode = confGeneral.mode) => {
 const getPlugins = (result = confGeneral.result) => {
 	const plugins = [
 		new HtmlWebpackPlugin({
-			template: './index.html',
+			template: './index.pug',
 			inject: 'body',
 			hash: true,
 		})
@@ -139,6 +139,15 @@ const confModule = {
 		{
 			test: /\.css$/,
 			use: getCssRule(),
+		},
+		{
+			test: /\.pug$/,
+			loader: {
+				loader: 'pug-loader',
+				options: {
+					pretty: process.env.NODE_ENV == 'development' ? true : false
+				}
+			},
 		},
 	]
 }

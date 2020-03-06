@@ -1,0 +1,7 @@
+mixin modal(options={})
+	- const id = options.id ? options.id : ''
+	.modal(id=id).modal_hidden
+		.modal__window
+			.modal__content
+				block
+			.modal__close Закрыть
