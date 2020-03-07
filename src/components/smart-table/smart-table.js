@@ -140,6 +140,8 @@ class SmartTable {
 			const unselectingColumn = this.columns[this.activeColumn]
 			unselectingColumn.active = false
 			unselectingColumn.self.classList.remove('smart-table__heading_active')
+			unselectingColumn.self.classList.remove('smart-table__heading_asc')
+			unselectingColumn.self.classList.remove('smart-table__heading_desc')
 
 			this.rows.forEach((row)=> {
 				row.cells.forEach((cell)=> {
