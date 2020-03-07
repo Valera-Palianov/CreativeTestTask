@@ -139,6 +139,7 @@ class SmartTable {
 		if(this.activeColumn != -1) {
 			const unselectingColumn = this.columns[this.activeColumn]
 			unselectingColumn.active = false
+			unselectingColumn.sort = 'default'
 			unselectingColumn.self.classList.remove('smart-table__heading_active')
 			unselectingColumn.self.classList.remove('smart-table__heading_asc')
 			unselectingColumn.self.classList.remove('smart-table__heading_desc')
