@@ -1,14 +1,28 @@
-mixin smart-table(options = {})
-	table.smart-table
-		block
-
-mixin smart-table__header(columns)
-	tr.smart-table__header
-		each column in columns
-			th(data-type=column.type, data-name=column.name).smart-table__cell.smart-table__heading= column.title
-
 mixin smart-table__row(values)
 	tr.smart-table__row
 		each value in values
 			td.smart-table__cell= value
 
+mixin smart-table(columns)
+	div
+		table.smart-table
+			thead
+				tr.smart-table__header
+					each column in columns
+						th(data-type=column.type ? column.type : 'string', data-name=column.name).smart-table__cell.smart-table__heading= column.title ? column.title : '-'
+			tbody
+				block
+			tfoot
+				tr.smart-table__footer
+					each column in columns
+						td.smart-table__search-wrap
+							if column.name
+								- let type
+								case column.type
+									when 'int'
+										-type = 'number'
+									when 'date'
+										-type = 'date'
+									default
+										-type = 'string'
+								input(type=type, name=column.name, placeholder=column.title).smart-table__search

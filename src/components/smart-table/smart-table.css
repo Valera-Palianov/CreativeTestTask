@@ -6,17 +6,17 @@
 	background-color: #F8F5FF;
 }
 
-.smart-table__heading {
+.smart-table .smart-table__heading {
 	transition: 0.2s;
 	background-color: #D1C4E9;
 	cursor: pointer;
 	position: relative;
 }
-.smart-table__heading:hover {
+.smart-table .smart-table__heading:hover {
 	background-color: #B39DDB;
 }
 
-.smart-table__heading_active {
+.smart-table .smart-table__heading_active {
 	background-color: #B39DDB;
 }
 
@@ -30,4 +30,12 @@
 	content: "↑";
 	position: absolute;
 	right: 8px;
+}
+
+.smart-table .smart-table__footer {
+	background-color: #B39DDB
+}
+
+.smart-table__row_hidden {
+	display: none;
 }

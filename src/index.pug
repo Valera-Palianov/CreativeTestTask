@@ -12,13 +12,13 @@ html
 		main
 			section
 
-				//- Модальные окна создаются простым миксином modal. Находиться они могут где угодно, не обязательно рядом с кнопкой
-				//- Кнопок может быть любое количество, и это может быть и вовсе не кнопка, а любой другой объект, у которого указан data-target
-				//- data-target должен совпадать с id окна, которое нужно открыть
-
 				h2 Модальные окна
+				p
+					|Модальные окна создаются простым миксином modal. Находиться они могут где угодно, не обязательно рядом с кнопкой. Кнопок может быть любое количество, и это может быть и вовсе не кнопка, а любой другой объект, у которого указан data-target. Data-target должен совпадать с id окна, которое нужно открыть
+
 				+button({target: 'modal'}) Open Modal Window
-				+button({target: 'another-modal'}) Open Another
+				+button({target: 'another-modal'}) Open Another One
+				+button({target: 'modal'}) Open First Modal Again
 				+modal({id: 'modal'})
 					|Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 				+modal({id: 'another-modal'})
@@ -28,9 +28,14 @@ html
 			section
 
 				h2 Интерактивные таблицы
+				
+				p
+					| Продвинутая таблица создается миксином smart-table. В настройки таблицы передаются колонки. Колонка имеет тип значений (int, string или date), который в ней будет, имя и заголовок, который будет отображаться в шапке таблицы. На основе типов значений так же автоматически создадутся поля для поиска по таблице. Если не передать тип, то ему по умолчанию присвоется String. Если не задать имя колонки, то по ней не будет доступен поиск. Имя должно быть уникальным в рамках одной таблицы. Ряды таблицы создаются с помощью smart-table__row, а значения передаются простым массивом. Дата обязательно указывается в порядке День, Месяц, Год. Месяц можно указывать словом на русском. В качестве разделителей можно использовать -, /, \, ., и пробел
 
-				+smart-table()
-					+smart-table__header([
+				p
+					| Таблица поддерживает поиск сразу по нескольким полям. Так же можно сортировать результаты поиска
+
+				+smart-table([
 						{type: 'int', name: 'id', title: 'ID'},
 						{type: 'string', name: 'name', title: 'Имя'},
 						{type: 'date', name: 'date', title: 'Дата'},
@@ -44,3 +49,5 @@ html
 					+smart-table__row([6, 'Мария', '1.08.2016', 122])
 					+smart-table__row([7, 'Анастасия', '20.11.2018', 34])
 					+smart-table__row([8, 'Степан', '12.11.2019', 10])
+					+smart-table__row([9, 'Володя', '12 октября 2012', 358])
+					+smart-table__row([10, 'Вася', '30.5.2020', -1])
