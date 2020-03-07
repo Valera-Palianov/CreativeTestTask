@@ -1,5 +1,6 @@
 include ./components/button/button
 include ./components/modal/modal
+include ./components/smart-table/smart-table
 
 doctype html
 html
@@ -27,3 +28,19 @@ html
 			section
 
 				h2 Интерактивные таблицы
+
+				+smart-table()
+					+smart-table__header([
+						{type: 'int', name: 'id', title: 'ID'},
+						{type: 'string', name: 'name', title: 'Имя'},
+						{type: 'date', name: 'date', title: 'Дата'},
+						{type: 'int', name: 'count', title: 'Счет'}
+					])
+					+smart-table__row([1, 'Вася', '15.06.2018', 11])
+					+smart-table__row([2, 'Петя', '23.11.2018', 23])
+					+smart-table__row([3, 'Иван', '12 марта 2017', 3])
+					+smart-table__row([4, 'Александр', '20/12/2010', 1])
+					+smart-table__row([5, 'Евгений', '12.09.2018', 112])
+					+smart-table__row([6, 'Мария', '1.08.2016', 122])
+					+smart-table__row([7, 'Анастасия', '20.11.2018', 34])
+					+smart-table__row([8, 'Степан', '12.11.2019', 10])

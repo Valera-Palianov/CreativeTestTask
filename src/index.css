@@ -19,3 +19,19 @@ section:not(:last-child) {
 	padding-bottom: 15px;
 	border-bottom: 1px solid #D8D8E1;
 }
+
+table {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 1000px;
+	border-collapse: collapse;
+}
+
+tr:nth-child(odd) {
+	background-color: #F5F5F5
+}
+
+td, th {
+	padding: 8px;
+	text-align: left;
+}

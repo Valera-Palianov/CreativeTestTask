@@ -1,0 +1,33 @@
+.smart-table__cell_active {
+	background-color: #FCFAFF;
+}
+
+.smart-table__row:nth-child(odd) .smart-table__cell_active {
+	background-color: #F8F5FF;
+}
+
+.smart-table__heading {
+	transition: 0.2s;
+	background-color: #D1C4E9;
+	cursor: pointer;
+	position: relative;
+}
+.smart-table__heading:hover {
+	background-color: #B39DDB;
+}
+
+.smart-table__heading_active {
+	background-color: #B39DDB;
+}
+
+.smart-table__heading_asc:after {
+	position: absolute;
+	right: 8px;
+	content: "↓"
+}
+
+.smart-table__heading_desc:after {
+	content: "↑";
+	position: absolute;
+	right: 8px;
+}

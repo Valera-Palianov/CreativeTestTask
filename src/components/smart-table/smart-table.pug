@@ -1,0 +1,14 @@
+mixin smart-table(options = {})
+	table.smart-table
+		block
+
+mixin smart-table__header(columns)
+	tr.smart-table__header
+		each column in columns
+			th(data-type=column.type, data-name=column.name).smart-table__cell.smart-table__heading= column.title
+
+mixin smart-table__row(values)
+	tr.smart-table__row
+		each value in values
+			td.smart-table__cell= value
+
