@@ -8,35 +8,235 @@ class SmartTable {
 		this.smartTableRows = this.smartTable.querySelectorAll('.smart-table__row')
 
 		this.onColumnClickHandler = this.onColumnClickHandler.bind(this)
+		this.onColumnMouseOverHandler = this.onColumnMouseOverHandler.bind(this)
+		this.onTableMouseOutHandler = this.onTableMouseOutHandler.bind(this)
 		this.onSearchInputChangeHandler = this.onSearchInputChangeHandler.bind(this)
-
-		this.months = [
-			'января',
-			'февраля',
-			'марта',
-			'апреля',
-			'мая',
-			'июня',
-			'июля',
-			'августа',
-			'сентября',
-			'ноября',
-			'декабря'
-		]
 
 		this.columns = []
 		this.rows = []
 
 		this.activeColumn = -1
+		this.hoveredColumn = -1
 
-		this.init()
+		this.parseTable()
+
+		this.smartTable.onmouseleave = () => {
+			this.onTableMouseOutHandler()
+		}
 	}
 
-	init() {
+	onColumnClickHandler(column) {
+		if(!column.active) {
+			this.highlightColumn(column)
+		}
+		this.changeSort(column)
+	}
+
+	onColumnMouseOverHandler(column) {
+		if(!column.hover) {
+			this.highlightColumn(column, 'mouseover')
+		}
+	}
+
+	onTableMouseOutHandler() {
+		if(this.hoveredColumn != -1) {
+			this.highlightColumn(this.columns[this.hoveredColumn], 'mouseout')
+		}
+	}
+
+	onSearchInputChangeHandler(column) {
+
+		this.search(column)
 		
+	}
+
+	search(column) {
+
+		const {id, type, cellsNodes, searchInputNode} = column
+		const value = searchInputNode.value
+		const array = this.rows
+
+		const relevationMatrix = []
+
+		array.forEach((row, i) => {
+
+			row.cells.forEach((cell, j) => {
+
+				if(cell.columnId == id) {
+
+					if(value == '') {
+						cell.relevant = true
+					} else {
+						switch(type) {
+							case 'int':
+								if(cell.value != value) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+							case 'date':
+								if(cell.value.getTime() != new Date(value.split('-')).getTime()) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+							case 'string':
+								if(cell.value.indexOf(value) == -1) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+						}
+					}
+
+					
+				}
+
+				if(j == 0) relevationMatrix[i] = []
+				relevationMatrix[i][j] = cell.relevant
+
+			})
+
+		})
+
+		const relevationRows = []
+		relevationMatrix.forEach((row, i) => {
+			let rowIsRelevant = true
+			row.forEach((value) => {
+				if(!value) rowIsRelevant = false
+			})
+			relevationRows[i] = rowIsRelevant
+		})
+
+		relevationRows.forEach((row, i) => {
+			if(!row) {
+				this.rows[i].node.classList.add('smart-table__row_hidden')
+			} else {
+				this.rows[i].node.classList.remove('smart-table__row_hidden')
+			}
+		})
+	}
+
+	highlightColumn(column, mode = 'click') {
+		if(mode == 'click') {
+			if(this.activeColumn != -1) {
+
+				const unselectingColumn = this.columns[this.activeColumn]
+				unselectingColumn.active = false
+				unselectingColumn.sort = 'default'
+				unselectingColumn.node.classList.remove('smart-table__heading_active')
+				unselectingColumn.node.classList.remove('smart-table__heading_asc')
+				unselectingColumn.node.classList.remove('smart-table__heading_desc')
+				unselectingColumn.cellsNodes.forEach((cellNode) => {
+					cellNode.classList.remove('smart-table__cell_active')
+				})
+
+			}
+
+			this.activeColumn = column.id
+
+			column.active = true
+			column.node.classList.add('smart-table__heading_active')
+			column.cellsNodes.forEach((cellNode) => {
+				cellNode.classList.add('smart-table__cell_active')
+			})
+		} else if (mode == 'mouseover') {
+			if(this.hoveredColumn != -1) {
+
+				const unhoveredColumn = this.columns[this.hoveredColumn]
+				unhoveredColumn.hover = false
+				unhoveredColumn.node.classList.remove('smart-table__heading_hover')
+				unhoveredColumn.cellsNodes.forEach((cellNode) => {
+					cellNode.classList.remove('smart-table__cell_hover')
+				})
+
+			}
+
+			this.hoveredColumn = column.id
+
+			column.hover = true
+			column.node.classList.add('smart-table__heading_hover')
+			column.cellsNodes.forEach((cellNode) => {
+				cellNode.classList.add('smart-table__cell_hover')
+			})
+		} else if (mode == 'mouseout') {
+			this.hoveredColumn = -1
+			column.hover = false
+			column.node.classList.remove('smart-table__heading_hover')
+			column.cellsNodes.forEach((cellNode) => {
+				cellNode.classList.remove('smart-table__cell_hover')
+			})
+		}
+		
+	}
+
+	changeSort(column) {
+		const { id, type, sort, node } = column
+
+		let newSort
+
+		switch(sort) {
+			case 'default':
+				newSort = 'asc'
+				node.classList.add('smart-table__heading_asc')
+				break
+			case 'asc':
+				newSort = 'desc'
+				node.classList.remove('smart-table__heading_asc')
+				node.classList.add('smart-table__heading_desc')
+				break
+			case 'desc':
+				newSort = 'default'
+				node.classList.remove('smart-table__heading_desc')
+				break
+		}
+
+		column.sort = newSort
+
+		this.sort(newSort, column)
+	}
+
+	sort(newSort, column) {
+
+		const {sort, type, id} = column
+		const array = this.rows
+		
+
+		if(sort != 'default') {
+			switch(type) {
+				case 'int':
+					array.sort((a, b) => a.cells[id].value - b.cells[id].value)
+					break
+				case 'date':
+					array.sort((a, b) => a.cells[id].value.getTime() - b.cells[id].value.getTime())
+					break
+				case 'string':
+					array.sort((a, b) => a.cells[id].value.localeCompare(b.cells[id].value))
+					break
+			}
+
+			if(sort == 'desc') {
+				array.reverse()
+			}
+		} else {
+			array.sort((a, b) => a.defaultPosition - b.defaultPosition)
+		}
+
+		this.tableShake()
+	}
+
+	tableShake() {
+		this.rows.forEach((row) => {
+			this.smartTableBody.appendChild(row.node)
+		})
+	}
+
+	parseTable() {
 		this.parseColumns()
 		this.parseRows()
-
 	}
 
 	parseColumns() {
@@ -46,19 +246,25 @@ class SmartTable {
 			const result = {}
 
 			result.id = i
-			result.self = column
+			result.node = column
 			result.name = column.getAttribute('data-name')
 			result.type = column.getAttribute('data-type')
 			result.sort = 'default'
 			result.active = false
+			result.hover = false
+			result.cellsNodes = []
 
 			column.onclick = () => {
 				this.onColumnClickHandler(result)
 			}
 
+			column.onmouseover = () => {
+				this.onColumnMouseOverHandler(result)
+			}
+
 			if(result.name != '') {
-				result.searchInput = this.smartTable.querySelector('.smart-table__search[name="'+result.name+'"]')
-				result.searchInput.onchange = () => {
+				result.searchInputNode = this.smartTable.querySelector('.smart-table__search[name="'+result.name+'"]')
+				result.searchInputNode.onchange = () => {
 					this.onSearchInputChangeHandler(result)
 				}
 			}
@@ -76,7 +282,7 @@ class SmartTable {
 			const result = {}
 
 			result.defaultPosition = i
-			result.self = row
+			result.node = row
 			result.cells = this.parseCells(row)
 
 			rows.push(result)
@@ -91,11 +297,21 @@ class SmartTable {
 		row.querySelectorAll('.smart-table__cell').forEach((cell, j) => {
 			const result = {}
 			
-			result.self = cell
+			this.columns[j].cellsNodes.push(cell)
+
+			result.node = cell
 			result.relevant = true
 			result.columnId = j
 			result.type = this.columns[j].type
-			result.value = this.parseValues(cell, result.type)
+			result.value = this.formatValues(cell, result.type)
+
+			cell.onclick = () => {
+				this.onColumnClickHandler(this.columns[j])
+			}
+
+			cell.onmouseover = () => {
+				this.onColumnMouseOverHandler(this.columns[j])
+			}
 
 			cells.push(result)
 		})
@@ -103,7 +319,22 @@ class SmartTable {
 		return cells
 	}
 
-	parseValues(node, type){
+	formatValues(node, type){
+
+		const months = [
+			'января',
+			'февраля',
+			'марта',
+			'апреля',
+			'мая',
+			'июня',
+			'июля',
+			'августа',
+			'сентября',
+			'октября',
+			'ноября',
+			'декабря'
+		]
 
 		let value = node.innerHTML
 
@@ -120,7 +351,7 @@ class SmartTable {
 				day = parseInt(value[0])
 				year = parseInt(value[2])
 				if(value[1].length > 2) {
-					month = this.months.indexOf(value[1].toLowerCase())
+					month = months.indexOf(value[1].toLowerCase())
 				} else {
 					month = parseInt(value[1])-1
 				}
@@ -133,173 +364,6 @@ class SmartTable {
 
 		return value
 	}
-
-	highlightColumn(column) {
-
-		if(this.activeColumn != -1) {
-			const unselectingColumn = this.columns[this.activeColumn]
-			unselectingColumn.active = false
-			unselectingColumn.sort = 'default'
-			unselectingColumn.self.classList.remove('smart-table__heading_active')
-			unselectingColumn.self.classList.remove('smart-table__heading_asc')
-			unselectingColumn.self.classList.remove('smart-table__heading_desc')
-
-			this.rows.forEach((row)=> {
-				row.cells.forEach((cell)=> {
-					if (cell.columnId == unselectingColumn.id) {
-						cell.self.classList.remove('smart-table__cell_active')
-					}
-				})
-			})
-		}
-
-		this.activeColumn = column.id
-
-		column.active = true
-		column.self.classList.add('smart-table__heading_active')
-
-		this.rows.forEach((row)=> {
-			row.cells.forEach((cell)=> {
-				if (cell.columnId == column.id) {
-					cell.self.classList.add('smart-table__cell_active')
-				}
-			})
-		})
-
-	}
-
-	sorting(newSort, column) {
-
-		const direction = column.sort
-		const type = column.type
-		const array = this.rows
-		const columnId = column.id
-
-		if(direction != 'default') {
-			switch(type) {
-				case 'int':
-					array.sort((a, b) => a.cells[columnId].value - b.cells[columnId].value)
-					break
-				case 'date':
-					array.sort((a, b) => a.cells[columnId].value.getTime() - b.cells[columnId].value.getTime())
-					break
-				case 'string':
-					array.sort((a, b) => a.cells[columnId].value.localeCompare(b.cells[columnId].value))
-					break
-			}
-
-			if(direction == 'desc') {
-				array.reverse()
-			}
-		} else {
-			array.sort((a, b) => a.defaultPosition - b.defaultPosition)
-		}
-
-		this.tableShake()
-	}
-
-	tableShake() {
-		this.rows.forEach((row) => {
-			this.smartTableBody.appendChild(row.self)
-		})
-	}
-
-	changeSorting(column) {
-		const columnId = column.id
-		const columnType = column.type
-
-		const currentSort = column.sort
-		let newSort
-
-		switch(currentSort) {
-			case 'default':
-				newSort = 'asc'
-				column.self.classList.add('smart-table__heading_asc')
-				break
-			case 'asc':
-				newSort = 'desc'
-				column.self.classList.remove('smart-table__heading_asc')
-				column.self.classList.add('smart-table__heading_desc')
-				break
-			case 'desc':
-				newSort = 'default'
-				column.self.classList.remove('smart-table__heading_desc')
-				break
-		}
-
-		column.sort = newSort
-
-		this.sorting(newSort, column)
-	}
-
-	onColumnClickHandler(column) {
-		if(!column.active) {
-			this.highlightColumn(column)
-		}
-		this.changeSorting(column)
-	}
-
-	onSearchInputChangeHandler(column) {
-
-		const columnNumber = column.id
-		const inputValue = column.searchInput.value
-		const type = column.type
-		const array = this.rows
-
-
-		const relevationMatrix = []
-		array.forEach((row, i) => {
-			row.cells.forEach((cell, j) => {
-				if(cell.columnId == columnNumber) {
-					switch(type) {
-						case 'int':
-							if(cell.value != inputValue && inputValue != '') {
-								cell.relevant = false
-							} else {
-								cell.relevant = true
-							}
-							break
-						case 'date':
-							const time = new Date(inputValue.split('-')).getTime()
-							if(cell.value.getTime() != time && inputValue != '') {
-								cell.relevant = false
-							} else {
-								cell.relevant = true
-							}
-							break
-						case 'string':
-							if(cell.value.indexOf(inputValue) == -1 && inputValue != '') {
-								cell.relevant = false
-							} else {
-								cell.relevant = true
-							}
-							break
-					}
-				}
-				if(j == 0) relevationMatrix[i] = []
-				relevationMatrix[i][j] = cell.relevant
-
-			})
-		})
-
-		const relevationRows = []
-		relevationMatrix.forEach((row, i) => {
-			let rowIsRelevant = true
-			row.forEach((value) => {
-				if(!value) rowIsRelevant = false
-			})
-			relevationRows[i] = rowIsRelevant
-		})
-
-		relevationRows.forEach((row, i) => {
-			if(!row) {
-				this.rows[i].self.classList.add('smart-table__row_hidden')
-			} else {
-				this.rows[i].self.classList.remove('smart-table__row_hidden')
-			}
-		})
-	}
-
 
 }
 

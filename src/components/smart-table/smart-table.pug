@@ -15,7 +15,7 @@ mixin smart-table(columns)
 			tfoot
 				tr.smart-table__footer
 					each column in columns
-						td.smart-table__search-wrap
+						td.smart-table__search-wrap.smart-table__cell
 							if column.name
 								- let type
 								case column.type

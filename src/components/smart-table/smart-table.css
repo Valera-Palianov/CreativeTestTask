@@ -1,22 +1,52 @@
+.smart-table {
+	margin: 0 auto;
+	width: 90%;
+	border-collapse: collapse;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.smart-table__row:nth-child(odd){
+	background-color: rgba(0,0,0,0.05)
+}
+
+.smart-table__cell_hover {
+	background-color: #FCF9FF;
+}
+
 .smart-table__cell_active {
-	background-color: #FCFAFF;
+	background-color: #F6F0FF;
+}
+
+.smart-table__row:nth-child(odd) .smart-table__cell_hover {
+	background-color: #F0EAF7
 }
 
 .smart-table__row:nth-child(odd) .smart-table__cell_active {
-	background-color: #F8F5FF;
+	background-color: #F1E7FF
+}	
+
+.smart-table__cell {
+	padding: 10px;
+	cursor: pointer;
 }
 
-.smart-table .smart-table__heading {
+.smart-table__heading {
 	transition: 0.2s;
 	background-color: #D1C4E9;
-	cursor: pointer;
 	position: relative;
+	padding: 10px;
+	text-align: left;
 }
-.smart-table .smart-table__heading:hover {
+.smart-table__heading:hover {
 	background-color: #B39DDB;
 }
 
-.smart-table .smart-table__heading_active {
+.smart-table__heading_hover {
+	background-color: #BFB0DB;	
+}
+
+.smart-table__heading_active {
 	background-color: #B39DDB;
 }
 

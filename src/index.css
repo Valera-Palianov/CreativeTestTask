@@ -2,36 +2,32 @@ body {
 	background-color:#F1F3F4;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 14px;
+	color:#383838;
 }
 
-main {
-	width: auto;
-	max-width: 1200px;
-	margin: 10px auto;
-	background-color:white;
-	padding: 15px;
-	border: 1px solid #D8D8E1;
-	border-radius: 3px;
-}
-
-section:not(:last-child) {
+h1, h2, h3, p {
+	margin-top: 0;
 	margin-bottom: 15px;
-	padding-bottom: 15px;
-	border-bottom: 1px solid #D8D8E1;
 }
 
-table {
-	margin: 0 auto;
+input:not([type="submit"]) {
+	box-sizing: border-box;
 	width: 100%;
-	max-width: 1000px;
-	border-collapse: collapse;
+	padding: 4px;
+	border-radius: 3px;
+	border: 1px solid #9A9AA0;
+	height: 31px;
+	transition: 0.2s;
 }
 
-tr:nth-child(odd) {
-	background-color: #F5F5F5
+input:not([type="submit"]):hover {
+	border-color: #333;
 }
 
-td, th {
-	padding: 8px;
-	text-align: left;
+input:not([type="submit"]):focus {
+	outline: none;
+}
+
+button:focus {
+	outline: none;
 }
