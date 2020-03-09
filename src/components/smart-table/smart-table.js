@@ -320,7 +320,6 @@ class SmartTable {
 								break
 							case 'date':
 								const time = new Date( value.split("-") )
-								console.log(time)
 								if(cell.value.getTime() != time.getTime()) {
 									cell.relevant = false
 								} else {
