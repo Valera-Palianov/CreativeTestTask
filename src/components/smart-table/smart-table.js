@@ -45,79 +45,7 @@ class SmartTable {
 	}
 
 	onSearchInputChangeHandler(column) {
-
-		this.search(column)
-		
-	}
-
-	search(column) {
-
-		const {id, type, cellsNodes, searchInputNode} = column
-		const value = searchInputNode.value
-		const array = this.rows
-
-		const relevationMatrix = []
-
-		array.forEach((row, i) => {
-
-			row.cells.forEach((cell, j) => {
-
-				if(cell.columnId == id) {
-
-					if(value == '') {
-						cell.relevant = true
-					} else {
-						switch(type) {
-							case 'int':
-								if(cell.value != value) {
-									cell.relevant = false
-								} else {
-									cell.relevant = true
-								}
-								break
-							case 'date':
-								if(cell.value.getTime() != new Date(value.split('-')).getTime()) {
-									cell.relevant = false
-								} else {
-									cell.relevant = true
-								}
-								break
-							case 'string':
-								if(cell.value.indexOf(value) == -1) {
-									cell.relevant = false
-								} else {
-									cell.relevant = true
-								}
-								break
-						}
-					}
-
-					
-				}
-
-				if(j == 0) relevationMatrix[i] = []
-				relevationMatrix[i][j] = cell.relevant
-
-			})
-
-		})
-
-		const relevationRows = []
-		relevationMatrix.forEach((row, i) => {
-			let rowIsRelevant = true
-			row.forEach((value) => {
-				if(!value) rowIsRelevant = false
-			})
-			relevationRows[i] = rowIsRelevant
-		})
-
-		relevationRows.forEach((row, i) => {
-			if(!row) {
-				this.rows[i].node.classList.add('smart-table__row_hidden')
-			} else {
-				this.rows[i].node.classList.remove('smart-table__row_hidden')
-			}
-		})
+		this.search(column)	
 	}
 
 	highlightColumn(column, mode = 'click') {
@@ -363,6 +291,78 @@ class SmartTable {
 		}
 
 		return value
+	}
+
+	search(column) {
+
+		const {id, type, cellsNodes, searchInputNode} = column
+		const value = searchInputNode.value
+		const array = this.rows
+
+		const relevationMatrix = []
+
+		array.forEach((row, i) => {
+
+			row.cells.forEach((cell, j) => {
+
+				if(cell.columnId == id) {
+
+					if(value == '') {
+						cell.relevant = true
+					} else {
+						switch(type) {
+							case 'int':
+								if(cell.value != value) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+							case 'date':
+								const time = new Date( value.split("-") )
+								console.log(time)
+								if(cell.value.getTime() != time.getTime()) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+							case 'string':
+								if(cell.value.indexOf(value) == -1) {
+									cell.relevant = false
+								} else {
+									cell.relevant = true
+								}
+								break
+						}
+					}
+
+					
+				}
+
+				if(j == 0) relevationMatrix[i] = []
+				relevationMatrix[i][j] = cell.relevant
+
+			})
+
+		})
+
+		const relevationRows = []
+		relevationMatrix.forEach((row, i) => {
+			let rowIsRelevant = true
+			row.forEach((value) => {
+				if(!value) rowIsRelevant = false
+			})
+			relevationRows[i] = rowIsRelevant
+		})
+
+		relevationRows.forEach((row, i) => {
+			if(!row) {
+				this.rows[i].node.classList.add('smart-table__row_hidden')
+			} else {
+				this.rows[i].node.classList.remove('smart-table__row_hidden')
+			}
+		})
 	}
 
 }
